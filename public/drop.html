@@ -1,0 +1,40 @@
+<head lang="en">
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+
+<body id="frameParent" style="margin: 0; padding: 0;">
+  <div class="instruct" style="position: relative;">Drop elements here...</div>
+  <div class="info"></div>
+
+  <script>
+    let mouseX = 0;
+    let mouseY = 0;
+
+    window.addEventListener("message", function (event) {
+      console.debug('received', event)
+      const data = event.data;
+      if (data.eventType === 'DRAG_START') {
+        console.debug('Object type:', data.objectType);
+      } else if (data.eventType === 'DRAG_END') {
+        // add element to instruct div
+        document.querySelector('.info').innerHTML = 'Dropped ' + data.data + ' at ' + mouseX + 'px' + ', ' + mouseY + 'px';
+        const div = document.createElement('div');
+        div.innerHTML = data.data;
+        div.style.position = 'absolute';
+        div.style.left = mouseX + 'px';
+        div.style.top = mouseY + 'px';
+        document.querySelector('.instruct').appendChild(div);
+
+        console.debug('end')
+      }
+    });
+
+
+    document.body.addEventListener('dragover', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+  </script>
